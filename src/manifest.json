@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "KaiTab",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "description": "KaiTab —— 你的 New Tab 万能遥控器。壳扩展内嵌多模式（WeTab、Tab Out 等），一键切换，不打架。",
   "chrome_url_overrides": {
     "newtab": "shell.html"

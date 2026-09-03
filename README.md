@@ -21,32 +21,26 @@ KaiTab 是一个**壳（Shell）**：它自己唯一接管 New Tab，内部集�
 ## 目录结构
 
 ```
-KaiTab/                          ← 工作文件夹（非 git 仓，仅本地管理用）
-├── extension/                   ← ★ GitHub 仓边界（Phase 1 在此 git init）
-│   ├── README.md                ← 本文件
-│   ├── CHANGELOG.md             ← 版本迭代记录
-│   ├── .gitignore
-│   ├── docs/                    ← 规划 / 方案文档
-│   │   └── KaiTab_方案.md
-│   ├── releases/                ← 各版本发布包（Phase 1+ 用）
-│   └── src/                     ← ★ 可加载扩展代码（chrome://extensions 指向此）
-│       ├── manifest.json
-│       ├── shell.html / shell.js / shell.css
-│       ├── modes/
-│       │   └── tabout/          ← 移植自 Tab Out（保留其 MIT LICENSE；含 KaiTab 自定义分组等优化，见「功能归属」节）
-│       └── assets/icons/        ← 壳扩展图标（参考豆包 LOGO 风格：扁平、透明底、浏览器窗口 + K，蓝绿色；16/48/128 同一份源图缩放）
-└── internal/                    ← 私有文档 / 物料（与仓平行，永不上传 GitHub）
+KaiTab 仓库（克隆后根目录即以下内容）
+├── README.md                ← 本文件
+├── CHANGELOG.md             ← 版本迭代记录
+├── LICENSE                  ← 壳代码 MIT © ChasenKai
+├── .gitignore
+└── src/                     ← ★ 可加载扩展代码（chrome://extensions 指向此）
+    ├── manifest.json
+    ├── shell.html / shell.js / shell.css
+    ├── modes/
+    │   └── tabout/          ← 移植自 Tab Out（保留其 MIT LICENSE；含 KaiTab 自定义分组等优化，见「功能归属」节）
+    └── assets/icons/        ← 壳扩展图标（扁平、透明底、浏览器窗口 + K；16/48/128 同一份源图缩放）
 ```
 
-> 仓边界下沉到 `extension/` 的原因：工作文件夹 `KaiTab/` 下还会放内部草稿、调研、私密素材等；
-> 把它们和公开仓的内容平行分开，上传时不会误带，git 边界也干净。
-> 克隆时可直接落到这个子目录：`git clone <repo-url> extension`。
+> 克隆时可直接落到本地子目录：`git clone <repo-url> extension`，随后加载 `extension/src`。
 
 ## 本地安装（开发者模式）
 
 1. 打开 Chrome / Edge → `chrome://extensions`（Edge 为 `edge://extensions`）
 2. 开启右上角「开发者模式」
-3. 点击「加载已解压的扩展程序」，选择本仓库的 **`extension/src/`** 目录
+3. 点击「加载已解压的扩展程序」，选择本仓库的 **`src/`** 目录
 4. **确认已卸载 / 关闭其他接管 New Tab 的扩展**（如 WeTab 扩展版），避免冲突
 5. 按 `Ctrl+T` 打开新标签页，验证 KaiTab 加载
 
@@ -78,7 +72,6 @@ KaiTab/                          ← 工作文件夹（非 git 仓，仅本地�
 - 全局快捷键：`background.js` + `manifest.commands`（`Ctrl+Shift+1..4`）
 - 备份与恢复：导出 / 导入全部配置 JSON（**含 Tab Out 的 `deferred` 与 `tabout:customGroups`**）
 - 隐藏 Chrome 原生「自定义 Chrome」按钮（尽力兜底 + 用户右键原生隐藏）
-- 图标（参考豆包 LOGO 风格，ImageGen 重生成）
 
 ### 壳内 iframe 接入的最小壳适配
 为适配壳内 iframe 环境，对 `src/modes/tabout/index.html` 做了两处最小改动：
@@ -91,7 +84,3 @@ KaiTab/                          ← 工作文件夹（非 git 仓，仅本地�
 
 - KaiTab 壳代码：MIT，© 2026 ChasenKai，见 `LICENSE`
 - `src/modes/tabout/`：MIT，© Zara Zhang 2026，保留其 `LICENSE`
-
-## 路线图
-
-见 `docs/KaiTab_方案.md` 的分阶段执行路线图（Phase 0 本地自用 → Phase 1 产品化 → Phase 2/3 上架）。

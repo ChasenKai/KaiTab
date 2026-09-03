@@ -13,3 +13,7 @@ node_modules/
 
 # 本地个人配置（Tab Out 可选配置，若存在应忽略）
 src/modes/tabout/config.local.js
+
+# 🔒 私有文档 / 物料（永不上传 GitHub，与 extension/ 仓平行）
+# 仓边界下沉设计：internal/ 是私有工作区，任何情况下不得进入公开仓。
+internal/
