@@ -1,0 +1,181 @@
+/* ===== 重置 ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+/* ===== 布局 ===== */
+body { display: flex; flex-direction: column; }
+
+/* 切换器 */
+#switcher {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  padding-right: 56px; /* 给右上角设置按钮留空 */
+  background: #1a1a2e;
+  border-bottom: 1px solid #2d2d44;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+#switcher button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #2d2d44;
+  color: #e0e0e0;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+#switcher button:hover { background: #3d3d5c; }
+#switcher button.active { background: #4f46e5; color: #fff; }
+
+/* 视图容器 */
+#viewport {
+  flex: 1;
+  position: relative;
+  background: #0f0f1a;
+}
+
+#viewport iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: none;
+}
+
+/* 设置按钮：固定在顶栏右上角，与内嵌产品本身的设置分离 */
+#settings-btn {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #e0e0e0;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 100;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#settings-btn:hover { background: #3d3d5c; }
+
+/* 设置面板 */
+#settings-panel {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 360px;
+  max-width: 90vw;
+  background: #1a1a2e;
+  border: 1px solid #2d2d44;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  z-index: 200;
+  color: #e0e0e0;
+}
+
+#settings-panel.hidden { display: none; }
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #2d2d44;
+}
+.settings-header h2 { font-size: 16px; font-weight: 600; }
+#close-settings {
+  background: none; border: none; color: #888;
+  font-size: 18px; cursor: pointer;
+}
+#close-settings:hover { color: #fff; }
+
+.settings-body { padding: 16px 20px; }
+.settings-body h3 { font-size: 14px; margin-bottom: 12px; color: #aaa; }
+
+.mode-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #2d2d44;
+}
+.mode-toggle-row:last-child { border-bottom: none; }
+.mode-toggle-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.mode-toggle-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+.mode-desc { font-size: 12px; color: #888; }
+
+/* 隐藏 Chrome 原生的「自定义 Chrome」按钮，避免用户误以为是 KaiTab 设置 */
+#customize-button,
+.customize-button,
+.chr-ntp-new-tab-button,
+.chr-ntp-link,
+.chr-ntp-button,
+.chr-ntp-options,
+[class*="customize-chrome"],
+[class*="ntp-customize"],
+[class*="ntp-button"],
+[aria-label*="自定义 Chrome"],
+[title*="自定义 Chrome"] {
+  display: none !important;
+}
+
+/* 通用设置行（默认模式 / 切换器显隐） */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.setting-row label { font-size: 14px; cursor: pointer; }
+.settings-select {
+  background: #2d2d44;
+  color: #e0e0e0;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 150px;
+}
+.settings-select:focus { outline: none; border-color: #4f46e5; }
+.setting-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+
+.notice { margin-top: 16px; padding: 12px; background: #2d2d44; border-radius: 8px; font-size: 12px; line-height: 1.6; color: #aaa; }
+.notice p { margin-bottom: 8px; }
+.notice p:last-child { margin-bottom: 0; }
+.version { margin-top: 12px; text-align: right; font-size: 11px; color: #666; }
+
+/* 备份与恢复 */
+.backup-row { display: flex; gap: 10px; }
+.backup-btn {
+  flex: 1;
+  padding: 8px 0;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  background: #2d2d44;
+  color: #e0e0e0;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.backup-btn:hover { background: #3d3d5c; border-color: #4f46e5; }
+.backup-hint { margin-top: 8px; font-size: 11px; line-height: 1.5; color: #777; }
+
+/* 遮罩层 */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 150;
+  display: none;
+}
+#overlay.show { display: block; }

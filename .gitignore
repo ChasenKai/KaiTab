@@ -1,0 +1,15 @@
+# KaiTab .gitignore
+
+# 扩展打包密钥（上架必需，切勿入库）
+*.pem
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+*.swp
+
+# 依赖（MVP 阶段零外部依赖，预留）
+node_modules/
+
+# 本地个人配置（Tab Out 可选配置，若存在应忽略）
+src/modes/tabout/config.local.js

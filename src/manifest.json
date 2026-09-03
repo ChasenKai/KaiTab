@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "KaiTab",
+  "version": "0.2.3",
+  "description": "KaiTab —— 你的 New Tab 万能遥控器。壳扩展内嵌多模式（WeTab、Tab Out 等），一键切换，不打架。",
+  "chrome_url_overrides": {
+    "newtab": "shell.html"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "switch-mode-1": { "suggested_key": { "default": "Ctrl+Shift+1" }, "description": "切换到第 1 个模式" },
+    "switch-mode-2": { "suggested_key": { "default": "Ctrl+Shift+2" }, "description": "切换到第 2 个模式" },
+    "switch-mode-3": { "suggested_key": { "default": "Ctrl+Shift+3" }, "description": "切换到第 3 个模式" },
+    "switch-mode-4": { "suggested_key": { "default": "Ctrl+Shift+4" }, "description": "切换到第 4 个模式" },
+    "switch-mode-5": { "description": "切换到第 5 个模式（请手动到 chrome://extensions/shortcuts 设置）" },
+    "switch-mode-6": { "description": "切换到第 6 个模式（请手动到 chrome://extensions/shortcuts 设置）" },
+    "switch-mode-7": { "description": "切换到第 7 个模式（请手动到 chrome://extensions/shortcuts 设置）" },
+    "switch-mode-8": { "description": "切换到第 8 个模式（请手动到 chrome://extensions/shortcuts 设置）" },
+    "switch-mode-9": { "description": "切换到第 9 个模式（请手动到 chrome://extensions/shortcuts 设置）" }
+  },
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google.com https://www.gstatic.com; frame-src 'self' https://web.wetab.link/; connect-src 'none';"
+  }
+}

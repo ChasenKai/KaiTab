@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>KaiTab</title>
+  <link rel="stylesheet" href="shell.css">
+</head>
+<body>
+  <!-- 顶部切换器 -->
+  <nav id="switcher" role="tablist" aria-label="模式切换"></nav>
+
+  <!-- 外壳设置入口（放在顶栏右上角，与内嵌产品本身的设置分离） -->
+  <button id="settings-btn" title="设置" aria-label="打开 KaiTab 设置">⚙️</button>
+
+  <!-- 视图容器 -->
+  <main id="viewport"></main>
+
+  <!-- 设置面板（默认隐藏） -->
+  <div id="settings-panel" class="hidden">
+    <div class="settings-header">
+      <h2>设置</h2>
+      <button id="close-settings" aria-label="关闭设置">✕</button>
+    </div>
+    <div class="settings-body">
+      <h3>显示的模式</h3>
+      <div id="mode-toggles"></div>
+
+      <hr>
+
+      <h3>常规</h3>
+      <div class="setting-row">
+        <label for="default-mode">默认启动模式</label>
+        <select id="default-mode" class="settings-select"></select>
+      </div>
+
+      <hr>
+      <h3>备份与恢复</h3>
+      <div class="backup-row">
+        <button id="export-config" class="backup-btn">导出配置</button>
+        <button id="import-config" class="backup-btn">导入配置</button>
+      </div>
+      <p class="backup-hint">导出会把全部 KaiTab 设置存成 JSON 文件（不含任何账号信息）；升级或换设备时导入即可恢复。</p>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
+
+      <hr>
+      <div class="notice">
+        <p>⚠️ <strong>提示</strong>：使用本扩展前，请关闭其他接管 New Tab 的扩展（如 Tab Out 扩展版），避免冲突。</p>
+        <p>🔒 <strong>隐私</strong>：本扩展不收集任何用户数据，所有配置存储在本地。</p>
+      </div>
+      <div class="version" id="version-info"></div>
+    </div>
+  </div>
+
+  <script src="shell.js"></script>
+</body>
+</html>
