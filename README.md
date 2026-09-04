@@ -4,10 +4,10 @@
 
 ## 为什么需要它
 
-Chromium 浏览器（Chrome / Edge / Arc / Brave / Vivaldi / Opera）**只允许一个扩展接管 `chrome://newtab`**。
+Chromium 浏览器（Chrome / Edge / Arc / Brave / Vivaldi / Opera）**只允许一个扩展作为 `chrome://newtab` 的覆盖页**。
 当你既想要 WeTab 的富功能仪表盘、又想要 Tab Out 的标签治理时，两个扩展会互相覆盖、只能二选一。
 
-KaiTab 是一个**壳（Shell）**：它自己唯一接管 New Tab，内部集成多个模式，用户可一键切换、记忆上次选择。
+KaiTab 是一个**壳（Shell）**：它作为 New Tab 的覆盖页，内部集成多个模式，用户可一键切换、记忆上次选择。
 
 ## 当前模式
 
@@ -41,7 +41,7 @@ KaiTab 仓库（克隆后根目录即以下内容）
 1. 打开 Chrome / Edge → `chrome://extensions`（Edge 为 `edge://extensions`）
 2. 开启右上角「开发者模式」
 3. 点击「加载已解压的扩展程序」，选择本仓库的 **`src/`** 目录
-4. **确认已卸载 / 关闭其他接管 New Tab 的扩展**（如 WeTab 扩展版），避免冲突
+4. **确认已卸载 / 关闭其它同样覆盖 New Tab 的扩展**（如 WeTab 扩展版），避免冲突
 5. 按 `Ctrl+T` 打开新标签页，验证 KaiTab 加载
 
 > Edge 本地加载无「请停用以开发者模式运行的扩展程序」横幅；Chrome 会有，不影响功能。
@@ -63,11 +63,11 @@ KaiTab 仓库（克隆后根目录即以下内容）
 ### KaiTab 在 Tab Out 基础上的优化 / 开发
 - **自定义分组（取代原 `config.local.js` 机制）**：规则改存 `chrome.storage.local` 的 `tabout:customGroups`，并新增「⚙ 分组」弹窗可界面增删规则（分组名 + 精确域名/后缀 + 可选路径前缀）。自动被 KaiTab 备份导出覆盖。
 - **关闭二次确认**：域内「Close all」与全局「Close all」点击弹 `window.confirm` 确认，规避误关大量标签；单标签 / 去重不受影响。
-- **favicon 加载修复**：Tab Out 用 Google favicon 服务会 302 到 `gstatic.com`，已在 `manifest.json` 的 CSP `img-src` 放行 `https://www.gstatic.com`。
+- **favicon 显示**：Tab Out 直接使用 Chrome 原生的 `chrome.tabs` `favIconUrl`（零网络、离线可用、不受网络环境影响），不再依赖 Google favicon 服务；无图标时回退为域名首字母色块。
 - **分组按钮对比度修复**：顶栏「⚙ 分组」按钮改用 Tab Out 主题变量，确保在浅色主题可见。
 
 ### KaiTab 壳本体（独立功能，非 Tab Out）
-- 多模式壳：唯一接管 New Tab，内部集成 Tab Out / WeTab 等模式
+- 多模式壳：作为 New Tab 覆盖页，内部集成 Tab Out / WeTab 等模式
 - 设置面板：模式开关、默认启动模式、版本号
 - 全局快捷键：`background.js` + `manifest.commands`（`Ctrl+Shift+1..4`）
 - 备份与恢复：导出 / 导入全部配置 JSON（**含 Tab Out 的 `deferred` 与 `tabout:customGroups`**）

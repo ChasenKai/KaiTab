@@ -384,6 +384,29 @@ header {
   border-radius: 2px;
 }
 
+/* Offline letter-badge fallback (no external favicon service needed) */
+.chip-favicon.favicon-letter,
+.deferred-favicon.favicon-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.chip-favicon.favicon-letter { font-size: 10px; }
+
+.deferred-favicon {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+.deferred-favicon.favicon-letter { font-size: 9px; }
+
 /* Title text — wraps naturally, no truncation */
 .chip-text {
   flex: 1;

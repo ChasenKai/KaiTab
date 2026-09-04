@@ -40,11 +40,15 @@ async function fetchOpenTabs() {
 
     const tabs = await chrome.tabs.query({});
     openTabs = tabs.map(t => ({
-      id:       t.id,
-      url:      t.url,
-      title:    t.title,
-      windowId: t.windowId,
-      active:   t.active,
+      id:         t.id,
+      url:        t.url,
+      title:      t.title,
+      windowId:   t.windowId,
+      active:     t.active,
+      // Use the tab's NATIVE favicon (populated by Chrome) so we make zero
+      // external network calls — works offline and in restricted networks
+      // where Google's favicon service is unreachable.
+      favIconUrl: t.favIconUrl || '',
       // Flag Tab Out's own pages so we can detect duplicate new tabs
       isTabOut: t.url === newtabUrl || t.url === 'chrome://newtab/',
     }));
@@ -228,12 +232,13 @@ async function closeTabOutDupes() {
 async function saveTabForLater(tab) {
   const { deferred = [] } = await chrome.storage.local.get('deferred');
   deferred.push({
-    id:        Date.now().toString(),
-    url:       tab.url,
-    title:     tab.title,
-    savedAt:   new Date().toISOString(),
-    completed: false,
-    dismissed: false,
+    id:         Date.now().toString(),
+    url:        tab.url,
+    title:      tab.title,
+    favIconUrl: tab.favIconUrl || '',
+    savedAt:    new Date().toISOString(),
+    completed:  false,
+    dismissed:  false,
   });
   await chrome.storage.local.set({ deferred });
 }
@@ -287,6 +292,40 @@ async function dismissSavedTab(id) {
 /* ----------------------------------------------------------------
    UI HELPERS
    ---------------------------------------------------------------- */
+
+/**
+ * hashHue(str)
+ * Stable 0-359 hue derived from a string, for the offline letter-badge.
+ */
+function hashHue(str) {
+  let h = 0;
+  const s = str || '';
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360;
+  return h;
+}
+
+/**
+ * faviconMarkup(item, cls)
+ *
+ * Returns favicon HTML for a tab or saved item.
+ * Prefers the item's NATIVE favIconUrl (Chrome populates it for live tabs) so
+ * we make ZERO external network calls — works offline and in restricted
+ * networks. Falls back to a colored letter badge (first letter of the domain)
+ * so the UI never depends on a third-party service like Google's favicon API.
+ */
+function faviconMarkup(item, cls) {
+  const fav = (item && (item.favIconUrl || item.icon)) || '';
+  if (fav && (fav.indexOf('http') === 0 || fav.indexOf('data:') === 0)) {
+    return `<img class="${cls}" src="${fav}" alt="" onerror="this.style.display='none'">`;
+  }
+  let letter = '?';
+  try {
+    const host = new URL(item && item.url || '').hostname.replace(/^www\./, '');
+    if (host) letter = host.charAt(0).toUpperCase();
+  } catch {}
+  const hue = hashHue(letter);
+  return `<span class="${cls} favicon-letter" style="background:hsl(${hue} 62% 52%)">${letter}</span>`;
+}
 
 /**
  * playCloseSound()
@@ -765,11 +804,8 @@ function buildOverflowChips(hiddenTabs, urlCounts = {}) {
     const chipClass = count > 1 ? ' chip-has-dupes' : '';
     const safeUrl   = (tab.url || '').replace(/"/g, '&quot;');
     const safeTitle = label.replace(/"/g, '&quot;');
-    let domain = '';
-    try { domain = new URL(tab.url).hostname; } catch {}
-    const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=16` : '';
     return `<div class="page-chip clickable${chipClass}" data-action="focus-tab" data-tab-url="${safeUrl}" title="${safeTitle}">
-      ${faviconUrl ? `<img class="chip-favicon" src="${faviconUrl}" alt="" onerror="this.style.display='none'">` : ''}
+      ${faviconMarkup(tab, 'chip-favicon')}
       <span class="chip-text">${label}</span>${dupeTag}
       <div class="chip-actions">
         <button class="chip-action chip-save" data-action="defer-single-tab" data-tab-url="${safeUrl}" data-tab-title="${safeTitle}" title="Save for later">
@@ -846,11 +882,8 @@ function renderDomainCard(group) {
     const chipClass = count > 1 ? ' chip-has-dupes' : '';
     const safeUrl   = (tab.url || '').replace(/"/g, '&quot;');
     const safeTitle = label.replace(/"/g, '&quot;');
-    let domain = '';
-    try { domain = new URL(tab.url).hostname; } catch {}
-    const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=16` : '';
     return `<div class="page-chip clickable${chipClass}" data-action="focus-tab" data-tab-url="${safeUrl}" title="${safeTitle}">
-      ${faviconUrl ? `<img class="chip-favicon" src="${faviconUrl}" alt="" onerror="this.style.display='none'">` : ''}
+      ${faviconMarkup(tab, 'chip-favicon')}
       <span class="chip-text">${label}</span>${dupeTag}
       <div class="chip-actions">
         <button class="chip-action chip-save" data-action="defer-single-tab" data-tab-url="${safeUrl}" data-tab-title="${safeTitle}" title="Save for later">
@@ -966,7 +999,6 @@ async function renderDeferredColumn() {
 function renderDeferredItem(item) {
   let domain = '';
   try { domain = new URL(item.url).hostname.replace(/^www\./, ''); } catch {}
-  const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=16`;
   const ago = timeAgo(item.savedAt);
 
   return `
@@ -974,7 +1006,7 @@ function renderDeferredItem(item) {
       <input type="checkbox" class="deferred-checkbox" data-action="check-deferred" data-deferred-id="${item.id}">
       <div class="deferred-info">
         <a href="${item.url}" target="_blank" rel="noopener" class="deferred-title" title="${(item.title || '').replace(/"/g, '&quot;')}">
-          <img src="${faviconUrl}" alt="" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px" onerror="this.style.display='none'">${item.title || item.url}
+          ${faviconMarkup(item, 'deferred-favicon')}${item.title || item.url}
         </a>
         <div class="deferred-meta">
           <span>${domain}</span>
@@ -1275,9 +1307,10 @@ document.addEventListener('click', async (e) => {
     const tabTitle = actionEl.dataset.tabTitle || tabUrl;
     if (!tabUrl) return;
 
-    // Save to chrome.storage.local
+    // Save to chrome.storage.local (carry the native favicon if available)
     try {
-      await saveTabForLater({ url: tabUrl, title: tabTitle });
+      const liveTab = openTabs.find(t => t.url === tabUrl);
+      await saveTabForLater({ url: tabUrl, title: tabTitle, favIconUrl: (liveTab && liveTab.favIconUrl) || '' });
     } catch (err) {
       console.error('[tab-out] Failed to save tab:', err);
       showToast('Failed to save tab');
