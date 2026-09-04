@@ -305,26 +305,61 @@ function hashHue(str) {
 }
 
 /**
- * faviconMarkup(item, cls)
+ * faviconLetter(item)
  *
- * Returns favicon HTML for a tab or saved item.
- * Prefers the item's NATIVE favIconUrl (Chrome populates it for live tabs) so
- * we make ZERO external network calls — works offline and in restricted
- * networks. Falls back to a colored letter badge (first letter of the domain)
- * so the UI never depends on a third-party service like Google's favicon API.
+ * First letter of the tab's domain, used for the offline fallback badge.
  */
-function faviconMarkup(item, cls) {
-  const fav = (item && (item.favIconUrl || item.icon)) || '';
-  if (fav && (fav.indexOf('http') === 0 || fav.indexOf('data:') === 0)) {
-    return `<img class="${cls}" src="${fav}" alt="" onerror="this.style.display='none'">`;
-  }
+function faviconLetter(item) {
   let letter = '?';
   try {
     const host = new URL(item && item.url || '').hostname.replace(/^www\./, '');
     if (host) letter = host.charAt(0).toUpperCase();
   } catch {}
+  return letter;
+}
+
+/**
+ * faviconMarkup(item, cls)
+ *
+ * Returns favicon HTML for a tab or saved item.
+ * Prefers the item's NATIVE favIconUrl (Chrome populates it for live tabs).
+ * If the favicon fails to load (blocked / offline / dead URL), the global
+ * error handler registered by initFaviconFallback() swaps it for a colored
+ * letter badge — so the UI never shows a blank gap and never depends on a
+ * third-party service like Google's favicon API.
+ */
+function faviconMarkup(item, cls) {
+  const fav = (item && (item.favIconUrl || item.icon)) || '';
+  const letter = faviconLetter(item);
   const hue = hashHue(letter);
+  if (fav && (fav.indexOf('http') === 0 || fav.indexOf('data:') === 0)) {
+    // No inline onerror: MV3 CSP blocks inline handlers, so the swap-to-letter
+    // fallback is handled globally in initFaviconFallback() via capture-phase
+    // error events instead.
+    return `<img class="${cls}" src="${fav}" alt="" data-letter="${letter}" data-hue="${hue}">`;
+  }
   return `<span class="${cls} favicon-letter" style="background:hsl(${hue} 62% 52%)">${letter}</span>`;
+}
+
+/**
+ * initFaviconFallback()
+ *
+ * Registers a single capture-phase 'error' listener that turns any favicon
+ * <img> that fails to load into the offline letter badge. CSP-safe (no inline
+ * handlers). Call once at startup.
+ */
+function initFaviconFallback() {
+  document.addEventListener('error', (e) => {
+    const el = e.target;
+    if (!el || el.tagName !== 'IMG') return;
+    if (!(el.classList.contains('chip-favicon') || el.classList.contains('deferred-favicon'))) return;
+    if (!el.dataset.letter) return;
+    const span = document.createElement('span');
+    span.className = el.className + ' favicon-letter';
+    span.style.background = `hsl(${el.dataset.hue || 0} 62% 52%)`;
+    span.textContent = el.dataset.letter;
+    if (el.parentNode) el.parentNode.replaceChild(span, el);
+  }, true);
 }
 
 /**
@@ -1602,4 +1637,5 @@ if (cgSaveBtn) cgSaveBtn.addEventListener('click', async () => {
 /* ----------------------------------------------------------------
    INITIALIZE
    ---------------------------------------------------------------- */
+initFaviconFallback();
 renderDashboard();

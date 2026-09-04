@@ -63,7 +63,7 @@ KaiTab 仓库（克隆后根目录即以下内容）
 ### KaiTab 在 Tab Out 基础上的优化 / 开发
 - **自定义分组（取代原 `config.local.js` 机制）**：规则改存 `chrome.storage.local` 的 `tabout:customGroups`，并新增「⚙ 分组」弹窗可界面增删规则（分组名 + 精确域名/后缀 + 可选路径前缀）。自动被 KaiTab 备份导出覆盖。
 - **关闭二次确认**：域内「Close all」与全局「Close all」点击弹 `window.confirm` 确认，规避误关大量标签；单标签 / 去重不受影响。
-- **favicon 显示**：Tab Out 直接使用 Chrome 原生的 `chrome.tabs` `favIconUrl`（零网络、离线可用、不受网络环境影响），不再依赖 Google favicon 服务；无图标时回退为域名首字母色块。
+- **favicon 显示**：Tab Out 直接使用 Chrome 原生的 `chrome.tabs` `favIconUrl`，不再依赖 Google 等第三方 favicon 服务；图标若为标签页自身域名的 `http(s)` 链接则由浏览器加载（与已打开标签页同源），加载失败或为空时回退为域名首字母色块，绝不出现空白。
 - **分组按钮对比度修复**：顶栏「⚙ 分组」按钮改用 Tab Out 主题变量，确保在浅色主题可见。
 
 ### KaiTab 壳本体（独立功能，非 Tab Out）
