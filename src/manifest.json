@@ -9,7 +9,11 @@
   "permissions": [
     "storage",
     "tabs",
-    "activeTab"
+    "activeTab",
+    "favicon"
+  ],
+  "optional_permissions": [
+    "topSites"
   ],
   "background": {
     "service_worker": "background.js"

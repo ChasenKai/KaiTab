@@ -11,6 +11,9 @@
 
   <link rel="stylesheet" href="style.css">
 
+  <!-- KaiTab 叠加层：常用站点磁贴样式（KaiTab 新增，非上游内容） -->
+  <link rel="stylesheet" href="kaitab-tiles.css">
+
   <!-- KaiTab option B: 自定义分组规则弹窗样式（inline 允许，CSP style-src 含 'unsafe-inline'） -->
   <style>
     header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -75,6 +78,13 @@
       <button id="tabout-groups-btn" class="header-btn" title="分组规则" aria-label="分组规则">⚙ 分组</button>
     </div>
   </header>
+
+  <!-- ================================================================
+       KaiTab 叠加层：常用站点磁贴
+       由 kaitab-tiles.js 渲染，数据源 chrome.topSites（可选权限）。
+       未授权 / 已关闭时渲染为空，不占位。此区块属 KaiTab 新增，非上游内容。
+       ================================================================ -->
+  <div id="kaitab-tiles"></div>
 
   <!-- ================================================================
        TAB OUT DUPES BANNER — appears when you have extra Tab Out tabs open
@@ -203,5 +213,8 @@
 
 <!-- Main dashboard logic — loads last so the DOM is ready -->
 <script src="app.js"></script>
+
+<!-- KaiTab 叠加层：常用站点磁贴（KaiTab 新增，独立文件便于日后整体抽离） -->
+<script src="kaitab-tiles.js"></script>
 </body>
 </html>

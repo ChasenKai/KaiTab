@@ -170,6 +170,52 @@ body { display: flex; flex-direction: column; }
 .backup-btn:hover { background: #3d3d5c; border-color: #4f46e5; }
 .backup-hint { margin-top: 8px; font-size: 11px; line-height: 1.5; color: #777; }
 
+/* ===== 常用站点磁贴（KaiTab 新增）=====
+   它是 Tab Out 的二级功能，所以缩进显示在 Tab Out 那行之下，
+   并用一根 └ 引导线把从属关系画出来。 */
+.mode-subsetting {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0 8px 30px;
+}
+.mode-subsetting::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 0;
+  height: 50%;
+  width: 12px;
+  border-left: 1px solid #3d3d5c;
+  border-bottom: 1px solid #3d3d5c;
+  border-bottom-left-radius: 6px;
+}
+.mode-subsetting label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #c9c9d6;
+}
+.mode-subsetting input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+
+.tiles-hint { margin: 0 0 10px; padding-left: 30px; font-size: 11px; line-height: 1.6; color: #777; }
+.tiles-hint button {
+  margin-left: 6px;
+  padding: 3px 10px;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  background: #2d2d44;
+  color: #e0e0e0;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.tiles-hint button:hover { background: #3d3d5c; border-color: #4f46e5; }
+
 /* 遮罩层 */
 #overlay {
   position: fixed;

@@ -73,6 +73,7 @@ KaiTab 仓库（克隆后根目录即以下内容）
 - **关闭二次确认**：域内「Close all」与全局「Close all」点击弹 `window.confirm` 确认，规避误关大量标签；单标签 / 去重不受影响。
 - **favicon 显示**：Tab Out 直接使用 Chrome 原生的 `chrome.tabs` `favIconUrl`，不再依赖 Google 等第三方 favicon 服务；图标若为标签页自身域名的 `http(s)` 链接则由浏览器加载（与已打开标签页同源），加载失败或为空时回退为域名首字母色块，绝不出现空白。
 - **分组按钮对比度修复**：顶栏「⚙ 分组」按钮改用 Tab Out 主题变量，确保在浅色主题可见。
+- **常用站点磁贴（顶部 `Shortcuts` 区）**：页面顶部新增一条磁贴，圆形图标 + 站点名，分隔风格沿用上游的 `.section-header`。数据取自 `chrome.topSites`——Chrome 新标签页「最常访问」的同一数据源，按浏览习惯自动生成（同一站点自动聚合，最多 10 条）。图标走 `chrome-extension://<id>/_favicon/`，读的是**浏览器本机缓存的 favicon**，不联网、不依赖第三方 favicon 服务，取不到时降级为离线字母色块。数据权限走 `optional_permissions`，**安装时不申请、无权限警告**，需用户在 KaiTab 设置里主动授权后才读取；未授权时只显示一行提示，不读取任何数据。实现在独立文件 `modes/tabout/kaitab-tiles.js` / `kaitab-tiles.css`，经 `index.html` 引入（+3 行），**不修改上游任何逻辑文件**。单条磁贴可悬停点 `×` 隐藏（存 `kaitab:tilesHidden`）。该开关在 KaiTab 设置面板里**缩进显示于 Tab Out 之下**（它只作用于 Tab Out）。支持 `+ Add shortcut` 手动添加（地址自动补全协议、重复校验）与**拖动排序**；自动项与手动项各有独立名额（8 / 10），互不挤占。
 
 ### KaiTab 壳本体（独立功能，非 Tab Out）
 - 多模式壳：作为 New Tab 覆盖页，内部集成 Tab Out / WeTab 等模式
@@ -85,6 +86,8 @@ KaiTab 仓库（克隆后根目录即以下内容）
 为适配壳内 iframe 环境，对 `src/modes/tabout/index.html` 做了两处最小改动：
 - 移除可选的 `config.local.js` 引用（避免 404 噪音）
 - 页脚外链 `target="_top"` → `target="_blank"`（避免在壳内跳出整个 New Tab）
+
+另为承载「常用站点磁贴」叠加层，`index.html` 又引入 3 行（1 个容器节点 + `kaitab-tiles.css` + `kaitab-tiles.js`）。
 
 其余文件（app.js / style.css / background.js / icons）原样保留，以方便日后与上游同步。
 

@@ -24,7 +24,8 @@ KaiTab 采用以下设计，最大限度降低用户数据风险：
 - **无后端**：KaiTab 自身不运行云端服务，也不收集用户数据。
 - **无账号**：无需登录，不关联用户身份。
 - **iframe 模式隔离**：WeTab 模式通过 `iframe` 嵌入 `https://web.wetab.link/`，遵循该网站的隐私政策；KaiTab 不拦截或记录其内容。
-- **最小权限**：`manifest.json` 仅申请完成 New Tab 壳功能所需的最少权限（`storage`、`tabs`、`activeTab`、`chrome_url_overrides`）。
+- **最小权限**：`manifest.json` 仅申请完成 New Tab 壳功能所需的最少权限（`storage`、`tabs`、`activeTab`、`favicon`、`chrome_url_overrides`）。其中 `favicon` 只用于读取浏览器**本机缓存**的网站图标（`chrome-extension://<id>/_favicon/`），不联网、不依赖任何第三方 favicon 服务；因已声明 `tabs`，该权限**不产生额外权限警告**。
+- **可选权限按需授权**：`topSites` 声明在 `optional_permissions` 中，**安装时不申请、不产生权限警告**。仅当用户主动开启「常用站点磁贴」时才弹出授权请求；授权后仅用于在本机渲染常用站点磁贴，读取到的数据不写入任何外部位置。可随时在扩展详情页撤销该权限。
 
 ## 已知注意事项
 

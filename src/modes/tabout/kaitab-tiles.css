@@ -1,0 +1,261 @@
+/* ============================================================
+   KaiTab 叠加层样式 —— 常用站点磁贴
+   ⚠️ 归属：本文件由 KaiTab 新增，不是 Tab Out 上游内容。
+   视觉目标：贴近 Chrome 新标签页的磁贴——圆形图标 + 下方站名。
+   配色沿用 Tab Out 的主题变量（--ink / --paper / --warm-gray /
+   --muted / --card-bg），不新增色板，保证与上游视觉一致。
+   分隔风格复用上游 .section-header / .section-line（见样式末尾说明）。
+   ============================================================ */
+
+#kaitab-tiles {
+  /* header 自带 48px 下边距，这里回收一部分，让磁贴区贴近头部 */
+  margin: -24px 0 40px;
+}
+
+.kt-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 8px;
+}
+
+.kt-tile {
+  position: relative;
+  width: 76px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.kt-tile:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* 可点击区域（图标 + 站名）；隐藏按钮是它的兄弟节点，不嵌在链接里 */
+.kt-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 2px 8px;
+  text-decoration: none;
+}
+
+.kt-icon {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--card-bg, #fffdf9);
+  border: 1px solid var(--warm-gray, #e8e2da);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+.kt-favicon {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.kt-dot {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.kt-label {
+  max-width: 76px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--ink, #1a1613);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- 磁贴右上角「⋮」菜单 ---- */
+.kt-more {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  line-height: 16px;
+  border: 1px solid var(--warm-gray, #e8e2da);
+  border-radius: 50%;
+  background: var(--paper, #f8f5f0);
+  color: var(--muted, #9a918a);
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.kt-tile:hover .kt-more,
+.kt-more:focus-visible {
+  opacity: 1;
+}
+
+.kt-more:hover {
+  color: var(--ink, #1a1613);
+  border-color: var(--muted, #9a918a);
+}
+
+.kt-menu {
+  position: absolute;
+  top: 26px;
+  right: 0;
+  z-index: 30;
+  min-width: 152px;
+  padding: 6px;
+  background: var(--card-bg, #fffdf9);
+  border: 1px solid var(--warm-gray, #e8e2da);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(26, 22, 19, 0.12);
+}
+
+.kt-menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink, #1a1613);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.kt-menu-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.kt-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--muted, #9a918a);
+}
+
+.kt-btn {
+  border: 1px solid var(--warm-gray, #e8e2da);
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--ink, #1a1613);
+  font: inherit;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.kt-btn:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.kt-btn-primary {
+  background: var(--ink, #1a1613);
+  border-color: var(--ink, #1a1613);
+  color: var(--paper, #f8f5f0);
+}
+
+.kt-btn-primary:hover {
+  background: #000;
+}
+
+/* ---- "+ Add shortcut" 磁贴（放行尾，与 Chrome 一致）---- */
+.kt-add {
+  width: 76px;
+  padding: 6px 2px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  color: var(--muted, #9a918a);
+}
+
+.kt-add:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.kt-icon-add {
+  background: transparent;
+  border-style: dashed;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--muted, #9a918a);
+}
+
+/* ---- 拖动排序（指针式，视觉自己接管）---- */
+.kt-tile {
+  cursor: grab;
+}
+
+.kt-tile.kt-dragging {
+  opacity: 0.35;                 /* 原位留一个"坑"，让位效果才看得出来 */
+}
+
+/* 跟手浮动的副本（position: fixed + pointer-events: none，事件穿透到真实磁贴） */
+.kt-ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.92;
+  border-radius: 10px;
+  background: var(--card-bg, #fffdf9);
+  box-shadow: 0 10px 28px rgba(26, 22, 19, 0.18);
+}
+
+body.kt-reordering,
+body.kt-reordering * {
+  cursor: grabbing;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---- 添加表单 ---- */
+.kt-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.kt-input {
+  border: 1px solid var(--warm-gray, #e8e2da);
+  background: var(--card-bg, #fffdf9);
+  color: var(--ink, #1a1613);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.kt-input-url {
+  min-width: 200px;
+}
+
+.kt-form-msg {
+  font-size: 11px;
+  color: var(--accent-rose, #b35a5a);
+}

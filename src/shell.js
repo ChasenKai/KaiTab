@@ -30,6 +30,8 @@ const MODES = [
 const SK_LAST_MODE = 'shell:lastMode';
 const SK_ENABLED_MODES = 'shell:enabledModes';
 const SK_DEFAULT_MODE = 'shell:defaultMode';      // 'last' | modeId，决定打开新标签时的初始模式
+// KaiTab 新增：常用站点磁贴（Tab Out 页面顶部的叠加层）总开关
+const SK_TILES_ENABLED = 'kaitab:tilesEnabled';
 
 // ===== DOM 引用 =====
 const switcherEl = document.getElementById('switcher');
@@ -205,7 +207,15 @@ function renderSettings() {
       row.appendChild(label);
       row.appendChild(desc);
       modeTogglesEl.appendChild(row);
+
+      // 「常用站点磁贴」只作用于 Tab Out 页面，所以作为 Tab Out 的缩进子项渲染，
+      // 让「这是某个模式下的二级功能」一眼可见（KaiTab 新增）。
+      if (mode.id === 'tabout') {
+        modeTogglesEl.appendChild(buildTilesSubSetting());
+      }
     }
+
+    renderTilesSetting();
   });
 
   // 2) 默认启动模式
@@ -230,9 +240,147 @@ function renderSettings() {
     });
 }
 
+// ===== 常用站点磁贴（KaiTab 新增 · 归属 Tab Out 的二级功能）=====
+// 磁贴本体渲染在 Tab Out 页面里（modes/tabout/kaitab-tiles.js）。
+// 这里只负责「开关 + 权限申请」——放在壳（顶层扩展页）是因为用户手势最可靠。
+// 注：配置项在设置面板里**缩进显示在 Tab Out 之下**（因为它只作用于 Tab Out），
+// 但归属仍是壳级的（存储键 kaitab:、逻辑在 shell.js），显示层级 ≠ 归属层级。
+function getTilesEls() {
+  return {
+    box: document.getElementById('tiles-enabled'),
+    hint: document.getElementById('tiles-hint')
+  };
+}
+
+// 构建「常用站点磁贴」的二级设置行（会被插在 Tab Out 那行之后）
+function buildTilesSubSetting() {
+  const frag = document.createDocumentFragment();
+
+  const row = document.createElement('div');
+  row.className = 'mode-subsetting';
+
+  const label = document.createElement('label');
+  const box = document.createElement('input');
+  box.type = 'checkbox';
+  box.id = 'tiles-enabled';
+  label.htmlFor = 'tiles-enabled';
+  label.append(box, document.createTextNode('常用站点磁贴'));
+
+  const desc = document.createElement('span');
+  desc.className = 'mode-desc';
+  desc.textContent = 'Chrome 式「最常访问」';
+
+  row.append(label, desc);
+  frag.appendChild(row);
+
+  const hint = document.createElement('p');
+  hint.className = 'tiles-hint';
+  hint.id = 'tiles-hint';
+  frag.appendChild(hint);
+
+  // 交互约定：「勾上」= 想用 → 顺手把权限要了（勾选框本身就是开关，
+  // 不让用户再去找旁边的小按钮）。「取消」= 只关显示，不回撤已授予的权限。
+  box.addEventListener('change', async () => {
+    if (!box.checked) {
+      await chrome.storage.local.set({ [SK_TILES_ENABLED]: false });
+      await renderTilesSetting();
+      refreshTilesInViewport();
+      return;
+    }
+
+    // ⚠️ permissions.request 必须是这里的**第一个 await**：
+    // change 事件带来的用户激活有时间窗，中间插别的 await 可能把弹窗资格耗掉。
+    // request() 幂等——已授权时直接返回 true，不会重复弹窗。
+    let ok = false;
+    let err = '';
+    try {
+      ok = await chrome.permissions.request({ permissions: ['topSites'] });
+    } catch (e) {
+      err = (e && e.message) ? e.message : String(e);
+    }
+
+    await chrome.storage.local.set({ [SK_TILES_ENABLED]: ok });
+    await renderTilesSetting();
+    refreshTilesInViewport();
+
+    if (!ok) {
+      const { hint: h } = getTilesEls();
+      if (h) {
+        h.textContent = err
+          ? `授权失败：${err} ｜ 若刚更新过代码，请先在扩展管理页重新加载 KaiTab 再试。`
+          : '未授权，磁贴不会显示。';
+      }
+    }
+  });
+
+  return frag;
+}
+
+async function renderTilesSetting() {
+  const { box, hint } = getTilesEls();
+  if (!box || !hint) return;
+
+  const { [SK_TILES_ENABLED]: saved } = await chrome.storage.local.get([SK_TILES_ENABLED]);
+  box.checked = saved !== false;
+  box.disabled = false;
+
+  hint.textContent = '';
+
+  // ⚠️ 不要用 `chrome.topSites` 是否存在做特性检测：
+  // 可选权限未授权时该命名空间可能根本不暴露，那样会永远卡在「不支持」、无法授权。
+  let granted = false;
+  try {
+    granted = await chrome.permissions.contains({ permissions: ['topSites'] });
+  } catch {
+    granted = false;
+  }
+
+  if (granted) {
+    hint.textContent = '已授权读取「最常访问的网站」，数据只在本机使用、不上传。';
+    return;
+  }
+
+  hint.appendChild(document.createTextNode('需授权读取「最常访问的网站」才能显示（勾选上方开关即可授权）。'));
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = '授权';
+  btn.addEventListener('click', async () => {
+    let ok = false;
+    let err = '';
+    try {
+      ok = await chrome.permissions.request({ permissions: ['topSites'] });
+    } catch (e) {
+      err = (e && e.message) ? e.message : String(e);
+    }
+
+    if (ok) {
+      await renderTilesSetting();
+      refreshTilesInViewport();
+      alert('已授权，磁贴已刷新。');
+      return;
+    }
+
+    // 最常见的原因：改过 manifest 后没在扩展管理页重新加载 KaiTab
+    hint.textContent = err
+      ? `授权失败：${err} ｜ 若刚更新过代码，请先在扩展管理页重新加载 KaiTab 再试。`
+      : '未授权，磁贴不会显示。';
+  });
+  hint.appendChild(btn);
+}
+
+// 通知当前视图里的模式页重新渲染磁贴（授权后免去手动重开新标签页）
+function refreshTilesInViewport() {
+  const frame = viewportEl.querySelector('iframe');
+  if (frame && frame.contentWindow) {
+    try { frame.contentWindow.postMessage({ type: 'kaitab:tiles-refresh' }, '*'); } catch {}
+  }
+}
+
 // ===== 保存设置 =====
 async function saveSettings() {
-  const checkboxes = modeTogglesEl.querySelectorAll('input[type="checkbox"]');
+  // 只取「模式」勾选框：二级设置项（如常用站点磁贴）也在同一容器内，必须排除，
+  // 否则它的 value 会被当成一个模式 id 写进 enabledModes。
+  const checkboxes = modeTogglesEl.querySelectorAll('input[type="checkbox"][data-mode-id]');
   const enabled = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
   if (enabled.length === 0) {
     alert('请至少启用一个模式');
@@ -344,6 +492,15 @@ function bindEvents() {
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg && msg.type === 'kaitab:switch' && msg.modeId) {
       switchMode(msg.modeId);
+    }
+  });
+
+  // Tab Out 页面（iframe）请求打开设置面板：被 postMessage 唤起
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'kaitab:open-settings') {
+      settingsPanel.classList.remove('hidden');
+      overlay.classList.add('show');
+      renderSettings();
     }
   });
 
