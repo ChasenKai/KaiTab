@@ -23,11 +23,11 @@
     "switch-mode-2": { "suggested_key": { "default": "Ctrl+Shift+2" }, "description": "切换到第 2 个模式" },
     "switch-mode-3": { "suggested_key": { "default": "Ctrl+Shift+3" }, "description": "切换到第 3 个模式" },
     "switch-mode-4": { "suggested_key": { "default": "Ctrl+Shift+4" }, "description": "切换到第 4 个模式" },
-    "switch-mode-5": { "description": "切换到第 5 个模式（请手动到 chrome://extensions/shortcuts 设置）" },
-    "switch-mode-6": { "description": "切换到第 6 个模式（请手动到 chrome://extensions/shortcuts 设置）" },
-    "switch-mode-7": { "description": "切换到第 7 个模式（请手动到 chrome://extensions/shortcuts 设置）" },
-    "switch-mode-8": { "description": "切换到第 8 个模式（请手动到 chrome://extensions/shortcuts 设置）" },
-    "switch-mode-9": { "description": "切换到第 9 个模式（请手动到 chrome://extensions/shortcuts 设置）" }
+    "switch-mode-5": { "description": "切换到第 5 个模式（需在浏览器扩展页的「键盘快捷键」中手动设置）" },
+    "switch-mode-6": { "description": "切换到第 6 个模式（需在浏览器扩展页的「键盘快捷键」中手动设置）" },
+    "switch-mode-7": { "description": "切换到第 7 个模式（需在浏览器扩展页的「键盘快捷键」中手动设置）" },
+    "switch-mode-8": { "description": "切换到第 8 个模式（需在浏览器扩展页的「键盘快捷键」中手动设置）" },
+    "switch-mode-9": { "description": "切换到第 9 个模式（需在浏览器扩展页的「键盘快捷键」中手动设置）" }
   },
   "icons": {
     "16": "assets/icons/icon16.png",
