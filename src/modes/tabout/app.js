@@ -27,17 +27,36 @@
 let openTabs = [];
 
 /**
+ * isOwnNewTab(url)
+ *
+ * 判定某个 URL 是不是「我们自己的 New Tab 页面」。
+ *
+ * ⚠️ KaiTab 壳适配（2026-09-14 修）：上游原实现只认扩展根的 `index.html`
+ * （上游自己的页面位置）+ `chrome://newtab/`，照抄在 KaiTab 里会**永远匹配不上**：
+ *   ① 真正的 New Tab 是**壳** `shell.html`，模式页只跑在壳的 iframe 里；
+ *   ② 模式页搬到了 `modes/tabout/index.html`，不再是根 `index.html`；
+ *   ③ Edge 的 newtab 是 `edge://newtab/` —— 只写 `chrome://newtab/` 会让
+ *      「重复 New Tab」提示条**在 Edge 上永不出现**（用户实测反馈）。
+ * 所以改用**运行时前缀**（`chrome.runtime.getURL('')` 会给出当前浏览器正确的
+ * 扩展 scheme），再补各浏览器的 newtab 兜底 URL —— 不手拼路径、不手拼 scheme。
+ */
+function isOwnNewTab(url) {
+  if (!url) return false;
+  if (url === 'chrome://newtab/' || url === 'edge://newtab/') return true;
+  try {
+    return url.startsWith(chrome.runtime.getURL(''));
+  } catch {
+    return false;
+  }
+}
+
+/**
  * fetchOpenTabs()
  *
  * Reads all currently open browser tabs directly from Chrome.
- * Sets the extensionId flag so we can identify Tab Out's own pages.
  */
 async function fetchOpenTabs() {
   try {
-    const extensionId = chrome.runtime.id;
-    // The new URL for this page is now index.html (not newtab.html)
-    const newtabUrl = `chrome-extension://${extensionId}/index.html`;
-
     const tabs = await chrome.tabs.query({});
     openTabs = tabs.map(t => ({
       id:         t.id,
@@ -50,7 +69,7 @@ async function fetchOpenTabs() {
       // where Google's favicon service is unreachable.
       favIconUrl: t.favIconUrl || '',
       // Flag Tab Out's own pages so we can detect duplicate new tabs
-      isTabOut: t.url === newtabUrl || t.url === 'chrome://newtab/',
+      isTabOut: isOwnNewTab(t.url),
     }));
   } catch {
     // chrome.tabs API unavailable (shouldn't happen in an extension page)
@@ -179,14 +198,9 @@ async function closeDuplicateTabs(urls, keepOne = true) {
  * Closes all duplicate Tab Out new-tab pages except the current one.
  */
 async function closeTabOutDupes() {
-  const extensionId = chrome.runtime.id;
-  const newtabUrl = `chrome-extension://${extensionId}/index.html`;
-
   const allTabs = await chrome.tabs.query({});
   const currentWindow = await chrome.windows.getCurrent();
-  const tabOutTabs = allTabs.filter(t =>
-    t.url === newtabUrl || t.url === 'chrome://newtab/'
-  );
+  const tabOutTabs = allTabs.filter(t => isOwnNewTab(t.url));
 
   if (tabOutTabs.length <= 1) return;
 

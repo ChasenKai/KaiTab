@@ -98,7 +98,8 @@ KaiTab 仓库（克隆后根目录即以下内容）
 - 为承载「常用站点磁贴」叠加层，引入 3 行（1 个容器节点 + `kaitab-tiles.css` + `kaitab-tiles.js`）
 
 **`modes/tabout/app.js`**
-- 仅 1 处用户可见文案：toast `Closed extra Tab Out tabs` → `Closed extra Mission tabs`（**逻辑零改动**）
+- 用户可见文案：toast `Closed extra Tab Out tabs` → `Closed extra Mission tabs`
+- **「重复 New Tab」判定修复**：上游只认扩展根的 `index.html` + `chrome://newtab/`，放在 KaiTab 里**永远匹配不上**（真正的新标签页是壳 `shell.html`，模式页在 `modes/tabout/index.html`），且 Edge 的 newtab 是 `edge://newtab/` → 该提示条**在 Edge 上永不出现**。改为用运行时前缀 `chrome.runtime.getURL('')` + 双浏览器兜底 URL。
 
 其余（`style.css` / `background.js` / `icons` / `LICENSE`）**完全未动**，以方便日后与上游同步。
 
