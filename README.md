@@ -1,6 +1,6 @@
 # KaiTab
 
-> 你的 New Tab 万能遥控器。壳扩展内嵌多模式（WeTab、Tab Out 等），一键切换，不打架。
+> 你的 New Tab 万能遥控器。壳扩展内嵌多模式（Mission、WeTab 等），一键切换，不打架。
 
 ## 为什么需要它
 
@@ -14,9 +14,11 @@ KaiTab 是一个**壳（Shell）**：它作为 New Tab 的覆盖页，内部集�
 | 模式 | 类型 | 来源 | 说明 |
 |------|------|------|------|
 | WeTab | iframe | `https://web.wetab.link/` 网页版 | 富功能 New Tab 仪表盘 |
-| Tab Out | local | 开源项目 [zarazhangrui/tab-out](https://github.com/zarazhangrui/tab-out) 移植 | 按域名分组展示所有打开标签、检测重复、一键关闭、保存稍后 |
+| **Mission** | local | 开源项目 [zarazhangrui/tab-out](https://github.com/zarazhangrui/tab-out) 移植 | 起始页 + 标签治理：常用站点磁贴（`Shortcuts`）、打开标签按域名分组、一键关闭、保存稍后 |
 
 新增模式只需在 `src/shell.js` 的 `MODES` 数组加一行。
+
+> 📌 **命名区分**：`Mission` 是本扩展里**这个模式的显示名**（顶栏看到的就是它）；它的代码移植自上游开源项目 **Tab Out**（目录仍为 `src/modes/tabout/`，许可与归属声明完整保留）。下文出现「Tab Out」时，除特别说明外**均指上游项目**，不是模式名。
 
 ## 目录结构
 
@@ -58,6 +60,8 @@ KaiTab 仓库（克隆后根目录即以下内容）
 
 为厘清开源合规与后续维护责任，下表区分 **Tab Out 原版自带** 与 **KaiTab 在其基础上新增/优化的部分**。
 
+> 本节中的「Tab Out」一律指**上游开源项目**（`src/modes/tabout/` 的代码来源），不是模式显示名。
+
 ### Tab Out 原版自带（仅移植，未改核心逻辑）
 - New Tab 仪表盘主框架（问候语 / 日期 / 页脚统计）
 - 打开标签 **按域名分组** 展示
@@ -73,25 +77,34 @@ KaiTab 仓库（克隆后根目录即以下内容）
 - **关闭二次确认**：域内「Close all」与全局「Close all」点击弹 `window.confirm` 确认，规避误关大量标签；单标签 / 去重不受影响。
 - **favicon 显示**：Tab Out 直接使用 Chrome 原生的 `chrome.tabs` `favIconUrl`，不再依赖 Google 等第三方 favicon 服务；图标若为标签页自身域名的 `http(s)` 链接则由浏览器加载（与已打开标签页同源），加载失败或为空时回退为域名首字母色块，绝不出现空白。
 - **分组按钮对比度修复**：顶栏「⚙ 分组」按钮改用 Tab Out 主题变量，确保在浅色主题可见。
-- **常用站点磁贴（顶部 `Shortcuts` 区）**：页面顶部新增一条磁贴，圆形图标 + 站点名，分隔风格沿用上游的 `.section-header`。数据取自 `chrome.topSites`——Chrome 新标签页「最常访问」的同一数据源，按浏览习惯自动生成（同一站点自动聚合，最多 10 条）。图标走 `chrome-extension://<id>/_favicon/`，读的是**浏览器本机缓存的 favicon**，不联网、不依赖第三方 favicon 服务，取不到时降级为离线字母色块。数据权限走 `optional_permissions`，**安装时不申请、无权限警告**，需用户在 KaiTab 设置里主动授权后才读取；未授权时只显示一行提示，不读取任何数据。实现在独立文件 `modes/tabout/kaitab-tiles.js` / `kaitab-tiles.css`，经 `index.html` 引入（+3 行），**不修改上游任何逻辑文件**。单条磁贴可悬停点 `×` 隐藏（存 `kaitab:tilesHidden`）。该开关在 KaiTab 设置面板里**缩进显示于 Tab Out 之下**（它只作用于 Tab Out）。支持 `+ Add shortcut` 手动添加（地址自动补全协议、重复校验）与**拖动排序**；自动项与手动项各有独立名额（8 / 10），互不挤占。
+- **常用站点磁贴（顶部 `Shortcuts` 区）**：页面顶部新增一条磁贴，圆形图标 + 站点名，分隔风格沿用上游的 `.section-header`。数据取自 `chrome.topSites`——Chrome 新标签页「最常访问」的同一数据源，按浏览习惯自动生成（同一站点自动聚合，最多 10 条）。图标走 `chrome-extension://<id>/_favicon/`，读的是**浏览器本机缓存的 favicon**，不联网、不依赖第三方 favicon 服务，取不到时降级为离线字母色块。数据权限走 `optional_permissions`，**安装时不申请、无权限警告**，需用户在 KaiTab 设置里主动授权后才读取；未授权时只显示一行提示，不读取任何数据。实现在独立文件 `modes/tabout/kaitab-tiles.js` / `kaitab-tiles.css`，经 `index.html` 引入（+3 行），**不修改上游任何逻辑文件**。单条磁贴可悬停点 `×` 隐藏（存 `kaitab:tilesHidden`）。该开关在 KaiTab 设置面板里**缩进显示于 Mission 之下**（它只作用于这个模式）。支持 `+ Add shortcut` 手动添加（地址自动补全协议、重复校验）与**拖动排序**；自动项与手动项各有独立名额（8 / 10），互不挤占。
 
-### KaiTab 壳本体（独立功能，非 Tab Out）
-- 多模式壳：作为 New Tab 覆盖页，内部集成 Tab Out / WeTab 等模式
-- 设置面板：模式开关、默认启动模式、版本号
+### KaiTab 壳本体（独立功能，非上游项目）
+- 多模式壳：作为 New Tab 覆盖页，内部集成 Mission / WeTab 等模式
+- 顶栏：模式切换器（左）+ **品牌簇**（`KaiTab by Kai` · GitHub 源码链接）与设置入口（右）
+- 设置面板：模式开关、默认启动模式、常用站点磁贴、**版本号与开源致谢**（上游署名放在此处，模式页页脚不再显示）
 - 全局快捷键：`background.js` + `manifest.commands`（`Ctrl+Shift+1..4`）
-- 备份与恢复：导出 / 导入全部配置 JSON（**含 Tab Out 的 `deferred` 与 `tabout:customGroups`**）
+- 备份与恢复：导出 / 导入全部配置 JSON（**含上游的 `deferred` 与 `tabout:customGroups`**）
 - 隐藏 Chrome 原生「自定义 Chrome」按钮（尽力兜底 + 用户右键原生隐藏）
 
-### 壳内 iframe 接入的最小壳适配
-为适配壳内 iframe 环境，对 `src/modes/tabout/index.html` 做了两处最小改动：
+### 对上游文件的最小改动（KaiTab 侧 · 全量清单）
+为适配壳内 iframe 环境与品牌策略，只动了下面这些地方：
+
+**`modes/tabout/index.html`**
 - 移除可选的 `config.local.js` 引用（避免 404 噪音）
-- 页脚外链 `target="_top"` → `target="_blank"`（避免在壳内跳出整个 New Tab）
+- **页脚上游署名链接移除** → 署名改放壳设置面板的「开源致谢」区
+- 页面 `<title>` 改为 `Mission`（原为 `Tab Out`）
+- 重复页提示条文案：`Tab Out` → `Mission`
+- 为承载「常用站点磁贴」叠加层，引入 3 行（1 个容器节点 + `kaitab-tiles.css` + `kaitab-tiles.js`）
 
-另为承载「常用站点磁贴」叠加层，`index.html` 又引入 3 行（1 个容器节点 + `kaitab-tiles.css` + `kaitab-tiles.js`）。
+**`modes/tabout/app.js`**
+- 仅 1 处用户可见文案：toast `Closed extra Tab Out tabs` → `Closed extra Mission tabs`（**逻辑零改动**）
 
-其余文件（app.js / style.css / background.js / icons）原样保留，以方便日后与上游同步。
+其余（`style.css` / `background.js` / `icons` / `LICENSE`）**完全未动**，以方便日后与上游同步。
+
+> **挪的是可见署名，不是版权声明**：上游许可与归属完整保留在 `modes/tabout/LICENSE`，归属说明见上一节。
 
 ## 许可
 
 - KaiTab 壳代码：MIT，© 2026 ChasenKai，见 `LICENSE`
-- `src/modes/tabout/`：MIT，© Zara Zhang 2026，保留其 `LICENSE`
+- `src/modes/tabout/`：MIT License，© 2026 Zara Zhang，保留其 `LICENSE`

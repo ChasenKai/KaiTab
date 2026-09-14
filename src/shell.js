@@ -9,11 +9,11 @@
 const MODES = [
   {
     id: 'tabout',
-    name: 'Tab Out',
+    name: 'Mission',
     type: 'local',
     path: 'modes/tabout/index.html',
-    icon: '🧹',
-    desc: '标签治理仪表盘'
+    icon: '🚀',
+    desc: '起始页与标签治理'
   },
   {
     id: 'wetab',
@@ -30,7 +30,7 @@ const MODES = [
 const SK_LAST_MODE = 'shell:lastMode';
 const SK_ENABLED_MODES = 'shell:enabledModes';
 const SK_DEFAULT_MODE = 'shell:defaultMode';      // 'last' | modeId，决定打开新标签时的初始模式
-// KaiTab 新增：常用站点磁贴（Tab Out 页面顶部的叠加层）总开关
+// KaiTab 新增：常用站点磁贴（Mission 页面顶部的叠加层）总开关
 const SK_TILES_ENABLED = 'kaitab:tilesEnabled';
 
 // ===== DOM 引用 =====
@@ -154,7 +154,7 @@ async function switchMode(modeId) {
     // 但 WeTab 为受信任的第三方网页服务，且此为个人工具场景，可接受。
     iframe.sandbox = 'allow-scripts allow-same-origin allow-popups allow-forms';
   } else if (mode.type === 'local') {
-    // 本地模式（如 Tab Out 移植）：不加 sandbox，否则 chrome.* API 不可用
+    // 本地模式（如 Mission 移植）：不加 sandbox，否则 chrome.* API 不可用
     iframe.src = chrome.runtime.getURL(mode.path);
   }
 
@@ -179,12 +179,10 @@ function showEmptyState() {
 
 // ===== 渲染设置面板 =====
 function renderSettings() {
-  // 版本信息
+  // 版本信息（只出现在设置面板，形如 `KaiTab v<版本>`；具体数字由 manifest 提供，不写死）。
+  // 顶栏品牌簇不放版本号 —— 设置里已有，重复没必要
   const vi = document.getElementById('version-info');
-  if (vi) {
-    const v = chrome.runtime.getManifest().version;
-    vi.textContent = `KaiTab v${v}`;
-  }
+  if (vi) vi.textContent = `KaiTab v${chrome.runtime.getManifest().version}`;
 
   // 1) 模式开关
   modeTogglesEl.textContent = '';
@@ -208,7 +206,7 @@ function renderSettings() {
       row.appendChild(desc);
       modeTogglesEl.appendChild(row);
 
-      // 「常用站点磁贴」只作用于 Tab Out 页面，所以作为 Tab Out 的缩进子项渲染，
+      // 「常用站点磁贴」只作用于 Mission 页面，所以作为 Mission 的缩进子项渲染，
       // 让「这是某个模式下的二级功能」一眼可见（KaiTab 新增）。
       if (mode.id === 'tabout') {
         modeTogglesEl.appendChild(buildTilesSubSetting());
@@ -240,10 +238,10 @@ function renderSettings() {
     });
 }
 
-// ===== 常用站点磁贴（KaiTab 新增 · 归属 Tab Out 的二级功能）=====
-// 磁贴本体渲染在 Tab Out 页面里（modes/tabout/kaitab-tiles.js）。
+// ===== 常用站点磁贴（KaiTab 新增 · 归属 Mission 的二级功能）=====
+// 磁贴本体渲染在 Mission 页面里（modes/tabout/kaitab-tiles.js）。
 // 这里只负责「开关 + 权限申请」——放在壳（顶层扩展页）是因为用户手势最可靠。
-// 注：配置项在设置面板里**缩进显示在 Tab Out 之下**（因为它只作用于 Tab Out），
+// 注：配置项在设置面板里**缩进显示在 Mission 之下**（因为它只作用于 Mission），
 // 但归属仍是壳级的（存储键 kaitab:、逻辑在 shell.js），显示层级 ≠ 归属层级。
 function getTilesEls() {
   return {
@@ -252,7 +250,7 @@ function getTilesEls() {
   };
 }
 
-// 构建「常用站点磁贴」的二级设置行（会被插在 Tab Out 那行之后）
+// 构建「常用站点磁贴」的二级设置行（会被插在 Mission 那行之后）
 function buildTilesSubSetting() {
   const frag = document.createDocumentFragment();
 
@@ -495,7 +493,7 @@ function bindEvents() {
     }
   });
 
-  // Tab Out 页面（iframe）请求打开设置面板：被 postMessage 唤起
+  // Mission 页面（iframe）请求打开设置面板：被 postMessage 唤起
   window.addEventListener('message', (e) => {
     if (e.data && e.data.type === 'kaitab:open-settings') {
       settingsPanel.classList.remove('hidden');

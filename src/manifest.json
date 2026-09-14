@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "KaiTab",
-  "version": "1.0.0",
-  "description": "KaiTab —— 你的 New Tab 多模式壳。内嵌 Tab Out、WeTab 等模式，顶栏一键切换；本地优先、MIT 开源。",
+  "version": "1.1.0",
+  "description": "KaiTab —— 你的 New Tab 多模式壳。内嵌 Mission、WeTab 等模式，顶栏一键切换；本地优先、MIT 开源。",
   "chrome_url_overrides": {
     "newtab": "shell.html"
   },

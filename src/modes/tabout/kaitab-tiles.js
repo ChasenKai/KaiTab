@@ -225,7 +225,7 @@
     // 保险：地址缺失时干脆不做成链接，避免 href="undefined" 被当成相对路径跳走
     if (item.url) link.href = item.url;
     link.title = labelOf(item);
-    // ⚠️ 磁贴跑在壳的 iframe 里：若让它「原地跳」，被换掉的是 Tab Out 页面本身，
+    // ⚠️ 磁贴跑在壳的 iframe 里：若让它「原地跳」，被换掉的是 Mission 页面本身，
     // 且多数站点会因 X-Frame-Options 拒绝被嵌 → 白屏。
     // 顶层导航 = Chrome 新标签页点快捷方式的行为（当前这个新标签页变成目标站）；
     // Ctrl/⌘ / 中键点击仍由浏览器原生处理成新标签页。

@@ -11,7 +11,7 @@ body { display: flex; flex-direction: column; }
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  padding-right: 56px; /* 给右上角设置按钮留空 */
+  padding-right: 220px; /* 给右上角「品牌簇 + 设置按钮」留空 */
   background: #1a1a2e;
   border-bottom: 1px solid #2d2d44;
   flex-shrink: 0;
@@ -66,6 +66,47 @@ body { display: flex; flex-direction: column; }
   justify-content: center;
 }
 #settings-btn:hover { background: #3d3d5c; }
+
+/* 品牌簇（KaiTab 新增）：顶栏右侧、设置按钮左边。
+   与 #settings-btn 同样绝对定位（顶栏由 #switcher 撑起，其内容会被 JS 清空重建，
+   故品牌簇不能放进 #switcher 里面）。
+   簇内顺序：KaiTab by Kai · GitHub · 版本号（版本号在最右）。 */
+#brand {
+  position: absolute;
+  top: 8px;
+  right: 56px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  color: #7c7c96;
+  user-select: none;
+  z-index: 100;
+}
+
+.brand-name {
+  font-weight: 500;
+  color: #c2c2dc;
+}
+.brand-name:hover { color: #e4e4f5; }
+
+.brand-text { white-space: nowrap; }
+
+.brand-sep {
+  width: 1px;
+  height: 12px;
+  background: #3d3d5c;
+  flex: 0 0 auto;
+}
+
+.brand-link {
+  color: #9a9ab8;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand-link:hover { color: #c8c8e0; text-decoration: underline; text-underline-offset: 2px; }
 
 /* 设置面板 */
 #settings-panel {
@@ -154,6 +195,17 @@ body { display: flex; flex-direction: column; }
 .notice p:last-child { margin-bottom: 0; }
 .version { margin-top: 12px; text-align: right; font-size: 11px; color: #666; }
 
+/* 致谢区（KaiTab 新增）：我们的名字在前，上游归属在后 */
+.credit {
+  margin-top: 6px;
+  text-align: right;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #666;
+}
+.credit a { color: #7c7c96; text-decoration: underline; text-underline-offset: 2px; }
+.credit a:hover { color: #a5a5c0; }
+
 /* 备份与恢复 */
 .backup-row { display: flex; gap: 10px; }
 .backup-btn {
@@ -171,7 +223,7 @@ body { display: flex; flex-direction: column; }
 .backup-hint { margin-top: 8px; font-size: 11px; line-height: 1.5; color: #777; }
 
 /* ===== 常用站点磁贴（KaiTab 新增）=====
-   它是 Tab Out 的二级功能，所以缩进显示在 Tab Out 那行之下，
+   它是 Mission 的二级功能，所以缩进显示在 Mission 那行之下，
    并用一根 └ 引导线把从属关系画出来。 */
 .mode-subsetting {
   position: relative;

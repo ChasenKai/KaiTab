@@ -12,6 +12,19 @@
   <!-- 外壳设置入口（放在顶栏右上角，与内嵌产品本身的设置分离） -->
   <button id="settings-btn" title="设置" aria-label="打开 KaiTab 设置">⚙️</button>
 
+  <!-- 品牌簇（KaiTab 新增）：顶栏右侧、设置按钮左边。
+       用户口径：「跟 Kai 相关的放一块」→ `KaiTab by Kai` 作为一个整体，再用竖线分隔 `GitHub`。
+       - 「KaiTab」→ 官网产品页（下载 / 更新 / 说明）
+       - 「by Kai」→ 纯文字，不链（暂无个人站；且对外只用公开花名）
+       - 「GitHub」→ 本仓源码
+       - 顶栏**不放版本号**：设置面板里已有（形如 `KaiTab v<版本>`），重复没必要 -->
+  <div id="brand">
+    <a class="brand-link brand-name" href="https://www.kaibuddy.com/kaitab.html" target="_blank" rel="noopener">KaiTab</a>
+    <span class="brand-text">by Kai</span>
+    <span class="brand-sep"></span>
+    <a class="brand-link" href="https://github.com/ChasenKai/KaiTab" target="_blank" rel="noopener">GitHub</a>
+  </div>
+
   <!-- 视图容器 -->
   <main id="viewport"></main>
 
@@ -48,6 +61,14 @@
         <p>🔒 <strong>隐私</strong>：本扩展不收集任何用户数据，所有配置存储在本地。</p>
       </div>
       <div class="version" id="version-info"></div>
+      <!-- 致谢（KaiTab 新增）：只放上游归属 —— 我们自己的署名已在顶栏品牌簇
+           （`KaiTab by Kai │ GitHub`），此处不重复。
+           上游署名从模式页页脚挪到这里：主界面不再出现上游名，但归属可查、LICENSE 照旧保留。 -->
+      <div class="credit">
+        标签仪表盘移植自
+        <a href="https://github.com/zarazhangrui/tab-out" target="_blank" rel="noopener">Tab Out</a>
+        （MIT License，© 2026 Zara Zhang）
+      </div>
     </div>
   </div>
 

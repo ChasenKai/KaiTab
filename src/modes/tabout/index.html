@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tab Out</title>
+  <title>Mission</title>
 
   <!-- Google Fonts: Newsreader (for headings/numbers) + DM Sans (for body text) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,7 +98,7 @@
         </svg>
       </div>
       <div class="tab-cleanup-text">
-        You have <strong id="tabOutDupeCount"></strong> Tab Out tabs open. Keep just this one?
+        You have <strong id="tabOutDupeCount"></strong> Mission tabs open. Keep just this one?
       </div>
     </div>
     <button class="tab-cleanup-btn" data-action="close-tabout-dupes">Close extras</button>
@@ -164,9 +164,11 @@
         <div class="stat-label">Open tabs</div>
       </div>
     </div>
-    <div class="last-refresh">
-      <span style="color: var(--muted); font-size: 11px;"><a href="https://github.com/zarazhangrui/tab-out" target="_blank" style="color: var(--muted); text-decoration: underline; text-underline-offset: 2px;">Tab Out</a> by <a href="https://x.com/zarazhangrui" target="_blank" style="color: var(--muted); text-decoration: underline; text-underline-offset: 2px;">Zara</a></span>
-    </div>
+    <!-- 上游署名（原「Tab Out by Zara」）已按 KaiTab 的品牌策略挪到
+         壳设置面板的「致谢」区；主界面不再出现上游名。
+         ⚠️ 上游许可仍完整保留在 modes/tabout/LICENSE，归属声明见 README
+         「功能归属」节 —— 挪的是可见署名，不是版权声明。 -->
+    <div class="last-refresh"></div>
   </footer>
 
 </div><!-- end .container -->
