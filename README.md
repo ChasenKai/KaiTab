@@ -20,6 +20,12 @@ KaiTab 是一个**壳（Shell）**：它作为 New Tab 的覆盖页，内部集�
 
 > 📌 **命名区分**：`Mission` 是本扩展里**这个模式的显示名**（顶栏看到的就是它）；它的代码移植自上游开源项目 **Tab Out**（目录仍为 `src/modes/tabout/`，许可与归属声明完整保留）。下文出现「Tab Out」时，除特别说明外**均指上游项目**，不是模式名。
 
+## 界面速览
+
+| Mission 模式（起始页 + 标签治理） | WeTab 模式（富功能仪表盘） |
+|---|---|
+| ![Mission 模式：顶栏 Mission/WeTab 一键切换，常用站点磁贴、打开标签按域名分组、稍后阅读清单](assets/screenshot-mission.png) | ![WeTab 模式：同一 New Tab 一键切到 WeTab 网页版仪表盘（第三方服务，iframe 内嵌）](assets/screenshot-wetab.png) |
+
 ## 目录结构
 
 ```
@@ -50,11 +56,11 @@ KaiTab 仓库（克隆后根目录即以下内容）
 
 ## 下载（推荐）
 
-推荐从**官网下载已打包的扩展** zip，解压后按上方「本地安装」步骤 1–5 加载：
+下载入口统一见**官网**（zip 包 / 浏览器商店链接以官网为准，新渠道上架只更新官网、本文件不动）：
 
 👉 https://www.kaibuddy.com/kaitab.html
 
-> GitHub 仓库仅托管源码，不提供打包下载；版本以官网发布为准。
+> GitHub 仓库仅托管源码，不提供打包下载；版本与分发渠道以官网发布为准。
 
 ## 功能归属：原版 Tab Out vs KaiTab 优化
 
@@ -81,7 +87,7 @@ KaiTab 仓库（克隆后根目录即以下内容）
 
 ### KaiTab 壳本体（独立功能，非上游项目）
 - 多模式壳：作为 New Tab 覆盖页，内部集成 Mission / WeTab 等模式
-- 顶栏：模式切换器（左）+ **品牌簇**（`KaiTab by Kai` · GitHub 源码链接）与设置入口（右）
+- 顶栏：模式切换器（左）+ **品牌标识**（`KaiTab by Kai` · GitHub 源码链接）与设置入口（右）
 - 设置面板：模式开关、默认启动模式、常用站点磁贴、**版本号与开源致谢**（上游署名放在此处，模式页页脚不再显示）
 - 全局快捷键：`background.js` + `manifest.commands`（`Ctrl+Shift+1..4`）
 - 备份与恢复：导出 / 导入全部配置 JSON（**含上游的 `deferred` 与 `tabout:customGroups`**）
@@ -104,6 +110,10 @@ KaiTab 仓库（克隆后根目录即以下内容）
 其余（`style.css` / `background.js` / `icons` / `LICENSE`）**完全未动**，以方便日后与上游同步。
 
 > **挪的是可见署名，不是版权声明**：上游许可与归属完整保留在 `modes/tabout/LICENSE`，归属说明见上一节。
+
+## 觉得有用？
+
+欢迎给 [KaiTab](https://github.com/ChasenKai/KaiTab) 点个 Star ⭐；问题与建议请提 [issue](https://github.com/ChasenKai/KaiTab/issues)。
 
 ## 许可
 
